@@ -1,6 +1,7 @@
 ---
 name: diagnose
 description: "调查交付后或用户验证期间报告的问题。将观察到的行为与产品、设计、规范、测试、代码和环境进行对比，以识别最早错误层并推荐正确的修正路径。"
+disable-model-invocation: true
 ---
 
 # 诊断
