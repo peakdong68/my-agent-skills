@@ -31,7 +31,7 @@ If the issue instead appears to be a Spec, RFC, ADR, PRD, or unresolved cross-la
 7. Re-run the regression check and original reproduction.
 8. Run directly related tests, then broader relevant tests when necessary.
 9. Run typechecking/build checks where applicable.
-10. Once done, use /code-review to review the work.
+10. Once done, use `/code-review` to review the work.
 
 ## Scope Rules
 
