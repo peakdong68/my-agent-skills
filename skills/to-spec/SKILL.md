@@ -1,356 +1,350 @@
 ---
 name: to-spec
-description: "将既定的产品和设计决策以及代码库证据转化为可实现、可测试的规范。不进行访谈或重新设计——精确定义必须实现什么以及如何验证。"
+description: "Turn established product and design decisions plus repository evidence into an implementation-ready, testable Spec. Do not interview or redesign — define exactly what must be implemented and how it will be verified."
 disable-model-invocation: true
 ---
 
-# 转写为规范
+# To Spec
 
-将既定的需求、设计决策和代码库证据转化为可实现规范。
+Turn established requirements, design decisions, and repository evidence into an implementation-ready Spec.
 
-规范回答：
+The Spec answers:
 
-> 到底必须实现什么，以及我们如何知道它是正确的？
+> What exactly must be implemented, and how will we know it is correct?
 
-它是实现与验收验证共享的契约。
+It is the contract shared by implementation and acceptance verification.
 
-典型流程：
+The issue tracker and triage label vocabulary should have been provided to you. If not, tell the user to run `/setup-matt-pocock-skills`.
 
-PRD → RFC → 规范 → 工单 → 实现 → 验证
+## Rules
 
-## 规则
+### 1. Synthesize, do not redesign
 
-### 1. 综合，而非重新设计
+Use decisions already established by relevant:
 
-使用相关方面已确立的决策：
+- conversation context
+- PRDs
+- RFCs
+- ADRs
+- existing Specs
+- prototypes
+- repository evidence
+- issue or task history
 
-- 对话上下文
-- PRD
-- RFC
-- ADR
-- 现有规范
-- 原型
-- 代码库证据
-- 问题或任务历史记录
+Do not reopen settled decisions.
 
-不要重新开启已解决的决策。
+Do not introduce new product, architecture, UX, compatibility, security, migration, or risk decisions merely to complete the Spec.
 
-不要仅仅为了完成规范而引入新的产品、架构、用户体验、兼容性、安全、迁移或风险决策。
+If implementation would require a new decision, the Spec is not ready.
 
-如果实现需要新的决策，则规范尚未准备就绪。
+### 2. Do not interview
 
-### 2. 不进行访谈
+Do not ask the user clarifying questions.
 
-不要向用户提出澄清性问题。
+Resolve repository-answerable facts by inspecting available evidence.
 
-通过检查可用证据来解决代码库可回答的事实。
+If a required product or design decision is missing, contradictory, or ambiguous:
 
-如果所需的产品或设计决策缺失、矛盾或模糊：
+- record it as a blocker
+- identify the owning upstream decision
+- do not guess
 
-- 将其记录为阻塞项
-- 识别拥有该问题的上游决策
-- 不要猜测
+A Spec with blocking unknowns is not implementation-ready.
 
-带有阻塞性未知项的规范不具备实施就绪性。
+### 3. Inspect repository evidence
 
-### 3. 检查代码库证据
+Before finalizing, inspect the relevant repository unless it has already been sufficiently explored.
 
-在最终定稿前，检查相关代码库，除非已被充分探索。
+Check only what is relevant, such as:
 
-仅检查相关的内容，例如：
+- current code and behavior
+- tests and fixtures
+- configuration
+- documentation
+- architecture boundaries
+- existing contracts
+- related PRDs, RFCs, ADRs, and Specs
+- established testing patterns
 
-- 当前代码和行为
-- 测试和固件
-- 配置
-- 文档
-- 架构边界
-- 现有契约
-- 相关的 PRD、RFC、ADR 和规范
-- 既定的测试模式
+Use project terminology and respect existing authoritative decisions.
 
-使用项目术语，并尊重现有的权威决策。
+Repository evidence establishes current behavior and technical constraints. It must not silently redefine established product intent.
 
-代码库证据确立当前行为和技术约束。它不得默默重新定义既定的产品意图。
+### 4. Specify behavior, not coding steps
 
-### 4. 指定行为，而非编码步骤
+Describe:
 
-描述：
+- observable behavior
+- contracts
+- invariants
+- constraints
+- relevant failure behavior
 
-- 可观察行为
-- 契约
-- 不变量
-- 约束
-- 相关失败行为
+Prefer:
 
-优先：
+> A successfully saved preference MUST remain effective across supported sessions.
 
-> 成功保存的偏好必须在受支持的会话间保持有效。
+Over:
 
-而非：
+> Add a boolean column to the settings table.
 
-> 向设置表添加一个布尔列。
+Include implementation details only when they are themselves part of an established contract or accepted design decision.
 
-仅当实现细节本身是既定契约或已接受设计决策的一部分时，才包含它们。
+Do not turn the Spec into an implementation plan.
 
-不要将规范变成实现计划。
+### 5. Make requirements normative and verifiable
 
-### 5. 使需求具有规范性和可验证性
-
-使用稳定的需求 ID：
+Use stable requirement IDs:
 
 - `R-001`
 - `R-002`
 
-在适当时使用规范性语言：
+Use normative language where appropriate:
 
-- **必须**
-- **禁止**
-- **应当**
-- **不应当**
-- **可以**
+- **MUST**
+- **MUST NOT**
+- **SHOULD**
+- **SHOULD NOT**
+- **MAY**
 
-每个**必须**和**禁止**必须具有可观察的验证路径。
+Every **MUST** and **MUST NOT** must have an observable verification path.
 
-在可行情况下，需求应保持原子性，并精确到实现不需要自行发明行为。
+Requirements should be atomic where practical and precise enough that implementation does not need to invent behavior.
 
-### 6. 优先使用最高的稳定验证接缝
+### 6. Prefer the highest stable verification seam
 
-通过能够可靠展示需求的最高稳定现有边界来验证行为。
+Verify behavior through the highest stable existing boundary that reliably demonstrates the requirement.
 
-优先：
+Prefer:
 
-外部/公共行为
-→ 集成/领域/服务边界
-→ 模块边界
-→ 内部组件
+external/public behavior  
+→ integration/domain/service boundary  
+→ module boundary  
+→ internal component
 
-优先使用现有接缝，而非引入仅用于测试的接缝。
+Prefer existing seams over introducing test-only seams.
 
-当所需行为可以通过更高边界展示时，不要测试私有实现细节。
+Do not test private implementation details when the required behavior can be demonstrated through a higher boundary.
 
-目标不是最大化接缝数量。使用提供足够行为覆盖的最少数量的稳定接缝。
+The goal is not to maximize the number of seams. Use the fewest stable seams that provide sufficient behavioral coverage.
 
-## 流程
+## Process
 
-### 第 1 步 — 确立范围和证据
+### Step 1 — Establish scope and evidence
 
-提取已确立的：
+Extract the already-established:
 
-- 目标
-- 所需行为
-- 范围
-- 排除项
-- 约束
-- 兼容性预期
-- 相关产品和设计决策
+- goal
+- required behavior
+- scope
+- exclusions
+- constraints
+- compatibility expectations
+- relevant product and design decisions
 
-检查理解当前系统和现有验证模式所需的代码库证据。
+Inspect repository evidence needed to understand the current system and existing verification patterns.
 
-不要凭空捏造缺失的决策。
+Do not invent missing decisions.
 
-### 第 2 步 — 定义需求和契约
+### Step 2 — Define requirements and contracts
 
-将既定行为转化为规范性需求。
+Translate established behavior into normative requirements.
 
-在必要时定义相关契约，例如：
+Define relevant contracts when necessary, such as:
 
-- API
-- 命令
-- 事件
-- 模式
-- 状态转换
-- 持久化行为
-- 兼容性行为
+- APIs
+- commands
+- events
+- schemas
+- state transitions
+- persistence behavior
+- compatibility behavior
 
-仅包含对实现或验证有实质影响的契约。
+Include only contracts that materially affect implementation or verification.
 
-不要仅仅为了使规范更详细而发明抽象。
+Do not invent abstractions merely to make the Spec more detailed.
 
-### 第 3 步 — 定义验收标准
+### Step 3 — Define acceptance criteria
 
-使用稳定的验收 ID：
+Use stable acceptance IDs:
 
 - `AC-001`
 - `AC-002`
 
-验收标准描述可观察结果。
+Acceptance criteria describe observable outcomes.
 
-优先：
+Prefer:
 
-> 给定 `<初始条件>`，当 `<动作>`，则 `<可观察结果>`。
+> Given `<initial condition>`, when `<action>`, then `<observable result>`.
 
-将验收标准映射到需求：
+Map acceptance criteria to requirements:
 
 `R-001 → AC-001, AC-002`
 
-每个所需行为必须可客观验证。
+Every required behavior must be objectively verifiable.
 
-验收标准定义在交付后验证期间必须展示的内容；它们不应规定不必要的实现细节。
+Acceptance criteria define what must be demonstrated during post-delivery verification; they should not prescribe unnecessary implementation details.
 
-### 第 4 步 — 定义验证策略
+### Step 4 — Define verification strategy
 
-对每个所需行为，确定如何展示它。
+For each required behavior, determine how it can be demonstrated.
 
-确定：
+Identify:
 
-- 主要验证接缝
-- 所需的自动化覆盖
-- 可复用的现有测试模式
-- 必要时进行集成、端到端或手动验证
+- primary verification seam
+- required automated coverage
+- existing test patterns that can be reused
+- integration, end-to-end, or manual verification when necessary
 
-现有测试是有用的证据，但规范应独立于当前实现定义所需行为。
+Existing tests are useful evidence, but the Spec should define required behavior independently of the current implementation.
 
-优先面向行为的验证，而非面向实现的测试。
+Prefer behavior-oriented verification over implementation-oriented testing.
 
-### 第 5 步 — 检查就绪性
+### Step 5 — Check readiness
 
-仅当满足以下条件时，规范才准备就绪：
+A Spec is ready only when:
 
-- 目标和范围清晰
-- 所需行为明确
-- 相关契约已定义
-- 相关错误和边缘情况已定义
-- 验收标准可观察
-- 每个必须和禁止都有验证路径
-- 存在可行的验证接缝
-- 相关代码库证据已被检查
-- 适用的 PRD、RFC、ADR 和现有规范决策得到尊重
-- 在需要时，兼容性或迁移行为已定义
-- 不存在阻塞性产品或设计决策
-- 实现可以在不自行发明行为的情况下推进
+- goal and scope are clear
+- required behavior is unambiguous
+- relevant contracts are defined
+- relevant errors and edge cases are defined
+- acceptance criteria are observable
+- every MUST and MUST NOT has a verification path
+- viable verification seams exist
+- relevant repository evidence has been inspected
+- applicable PRD, RFC, ADR, and existing Spec decisions are respected
+- compatibility or migration behavior is defined when required
+- no blocking product or design decision remains
+- implementation can proceed without inventing behavior
 
-如果任何阻塞条件失败：
+If any blocking condition fails:
 
-- 将规范标记为 `未准备实施`
-- 识别阻塞项及其所属的上游层
-- 不要猜测
-- 不要将其发布为准备实施
+- mark the Spec `NOT READY FOR IMPLEMENTATION`
+- identify the blocker and its owning upstream layer
+- do not guess
+- do not publish it as ready for implementation
 
-## 规范模板
+## Spec Template
 
-如果代码库有规范格式，则使用该格式。
+Use the repository's canonical Spec format when one exists.
 
-否则使用：
+Otherwise use:
 
-# 规范：<标题>
+# Spec: <Title>
 
-## 状态
+## Status
 
-草稿 | 就绪
+Draft | Ready
 
-## 目标
+## Goal
 
-此实现必须达成什么结果？
+What outcome must this implementation achieve?
 
-## 上下文
+## Context
 
-仅包含理解和实现此规范所必需的当前行为、约束和上游决策。
+Only the current behavior, constraints, and upstream decisions necessary to understand and implement this Spec.
 
-## 范围
+## Scope
 
-### 范围内
-
-- ...
-
-### 范围外
+### In Scope
 
 - ...
 
-## 需求
+### Out of Scope
 
-### R-001 — <需求>
+- ...
 
-系统**必须** ...
+## Requirements
 
-### R-002 — <需求>
+### R-001 — <Requirement>
 
-系统**禁止** ...
+The system **MUST** ...
 
-## 接口和契约
+### R-002 — <Requirement>
 
-仅在相关时包含。
+The system **MUST NOT** ...
 
-描述对实现或验证有实质约束的所需外部或内部契约。
+## Interfaces and Contracts
 
-## 错误和边缘情况
+Include only when relevant.
 
-仅包含对所需行为有实质影响的情况。
+Describe required external or internal contracts that materially constrain implementation or verification.
 
-## 验收标准
+## Error and Edge Cases
+
+Include only cases that materially affect required behavior.
+
+## Acceptance Criteria
 
 ### AC-001 → R-001
 
-给定 ...，当 ...，则 ...
+Given ..., when ..., then ...
 
 ### AC-002 → R-002
 
-给定 ...，当 ...，则 ...
+Given ..., when ..., then ...
 
-## 验证策略
+## Verification Strategy
 
-### 主要接缝
+### Primary Seam
 
-可通过其展示所需行为的最高稳定边界。
+The highest stable boundary through which the required behavior can be demonstrated.
 
-### 所需覆盖
+### Required Coverage
 
-描述所需的行为验证以及应复用的相关现有测试模式。
+Describe the behavioral verification required and relevant existing test patterns that should be reused.
 
-## 兼容性和迁移
+## Compatibility and Migration
 
-仅在相关时包含。
+Include only when relevant.
 
-## 风险和延期工作
+## Risks and Deferred Work
 
-仅包含实现者需要了解的非阻塞限制、风险或明确推迟的工作。
+Include only non-blocking limitations, risks, or explicitly deferred work that implementers need to understand.
 
-阻塞性决策属于就绪状态部分。
+Blocking decisions belong in Readiness instead.
 
-## 参考文献
+## References
 
-相关的 PRD、RFC、ADR、规范、原型、问题或代码库证据。
+Relevant PRDs, RFCs, ADRs, Specs, prototypes, issues, or repository evidence.
 
-## 就绪状态
+## Readiness
 
-`准备实施`
+`READY FOR IMPLEMENTATION`
 
-或：
+or:
 
-`未准备实施`
+`NOT READY FOR IMPLEMENTATION`
 
-如果未就绪，列出每个阻塞项以及拥有未解决决策的上游层。
+If not ready, list each blocker and the upstream layer that owns the unresolved decision.
 
-## 发布
+## Publishing
 
-如果规范已就绪且项目问题跟踪器已配置：
+If the Spec is ready and a project issue tracker is configured:
 
-1. 发布规范
-2. 应用项目的实施就绪分类标签，如 `ready-for-agent`
-3. 遵循现有项目约定，不发明额外的分类
+1. publish the Spec
+2. apply the project's implementation-ready triage label, such as `ready-for-agent`
+3. follow existing project conventions without inventing additional triage
 
-如果所需跟踪器配置不可用，则生成规范并报告无法完成发布。
+If required tracker configuration is unavailable, produce the Spec and report that publication could not be completed.
 
-如果此环境特别使用 `/setup-matt-pocock-skills` 进行跟踪器设置，则在缺少所需配置时指示用户运行它。
+If this environment specifically uses `/setup-matt-pocock-skills` for tracker setup, instruct the user to run it when required configuration is missing.
 
-不要凭空捏造跟踪器配置、项目标识符、问题类型或标签。
+Do not invent tracker configuration, project identifiers, issue types, or labels.
 
-## 编写规则
+## Writing Rules
 
-- 保持简洁、规范性和可测试性。
-- 在机制之前指定结果。
-- 避免使用模糊术语，如“适当”、“快速”或“优雅”，除非其含义已定义。
-- 不要制造需求、边缘情况、契约或抽象。
-- 不要重新开启已接受的产品或设计决策。
-- 除非文件路径或代码片段本身就是既定契约的一部分，否则不要包含它们。
-- 不要编写对话记录。
-- 移除已解决的问题和探索性推理。
-- 使用既定的项目术语。
-- 仅当可选部分对实现或验证有实质影响时，才包含它们。
+- Be concise, normative, and testable.
+- Specify outcomes before mechanisms.
+- Avoid ambiguous terms such as "properly", "fast", or "gracefully" unless their meaning is defined.
+- Do not manufacture requirements, edge cases, contracts, or abstractions.
+- Do not reopen accepted product or design decisions.
+- Do not include file paths or code snippets unless they are themselves part of an established contract.
+- Do not write a conversation transcript.
+- Remove resolved questions and exploratory reasoning.
+- Use established project terminology.
+- Include optional sections only when they materially affect implementation or verification.
 
-规范是实现和验收契约。
+The Spec is the implementation and acceptance contract.
 
-`implement` 使用它来确定必须构建什么。
-
-`verify` 使用它来确定必须展示什么。
-
-下游工单将契约分解为可执行的工作，而不重新定义它。
+Downstream tickets decompose the contract into executable work without redefining it.

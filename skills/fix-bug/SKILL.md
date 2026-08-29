@@ -1,68 +1,66 @@
 ---
 name: fix-bug
-description: "修复交付后用户确认的实现缺陷。使用已建立的诊断或权威契约，复现失败，进行最小的正确代码变更，添加回归覆盖，并验证修复。"
+description: "Fix a user-confirmed implementation bug after delivery. Use the established diagnosis or authoritative contract, reproduce the failure, make the smallest correct code change, add regression coverage, and verify the fix."
 disable-model-invocation: true
 ---
 
-# 修复缺陷
+# Fix Bug
 
-修复交付后用户明确要求纠正的**实现缺陷**。
+Fix a post-delivery **Implementation Bug** that the user has explicitly asked to correct.
 
-此技能会更改代码。它不会重新设计产品行为或架构。
+This skill changes code. It does not redesign product behavior or architecture.
 
-## 前置条件
+## Preconditions
 
-在修复之前，确立：
-- 观察到的失败
-- 预期行为
-- 权威契约或诊断
-- 足以将其视为实现缺陷的证据
+Before fixing, establish:
+- observed failure
+- expected behavior
+- authoritative contract or diagnosis
+- enough evidence to treat this as an implementation defect
 
-如果问题反而看起来是规范、RFC、ADR、PRD 或未解决的跨层问题，则停止并将其路由到上游。不要在代码中猜测。
+If the issue instead appears to be a Spec, RFC, ADR, PRD, or unresolved cross-layer problem, stop and route it upstream. Do not guess in code.
 
-## 流程
+## Process
 
-1. 复现报告中的失败，或复用来自 `/diagnose` 的可靠复现。
-2. 识别能够捕获真正缺陷的最小稳定接缝。
-3. 在可行时添加或确认回归覆盖；它应在修复之前失败。
-4. 定位根本实现原因。
-5. 应用最小的连贯修正。
-6. 如果在修复过程中出现意外的技术失败，使用 `/diagnosing-bugs`。
-7. 重新运行回归检查和原始复现。
-8. 运行直接相关的测试，然后在必要时运行更广泛的相关测试。
-9. 在适用时运行类型检查/构建检查。
-10. 如果变更非平凡或项目约定要求，使用 `/code-review`。
+1. Reproduce the reported failure .
+2. Identify the smallest stable seam that captures the real bug.
+3. Add or confirm regression coverage when practical; it should fail before the fix.
+4. Locate the root implementation cause.
+5. Apply the smallest coherent correction.
+6. If unexpected technical failures arise during the fix, use `/diagnosing-bugs`.
+7. Re-run the regression check and original reproduction.
+8. Run directly related tests, then broader relevant tests when necessary.
+9. Run typechecking/build checks where applicable.
+10. Once done, use /code-review to review the work.
 
-## 范围规则
+## Scope Rules
 
-不要使用缺陷修复来引入不相关的：
-- 重构
-- 架构变更
-- API 重新设计
-- 依赖项
-- 优化
-- 清理
-- 产品行为
+Do not use a bug fix to introduce unrelated:
+- refactoring
+- architecture changes
+- API redesign
+- dependencies
+- optimization
+- cleanup
+- product behavior
 
-仅当安全实施正确修复所必需时，才允许进行小的重构。
+Small refactoring is allowed only when required to implement the correct fix safely.
 
-不要仅仅为了使测试套件通过而削弱或删除有效的测试。
+Do not weaken or delete a valid test merely to make the suite pass.
 
-## 完成
+## Completion
 
-当满足以下条件时，修复完成：
-- 原始问题不再复现
-- 预期行为已恢复
-- 在可行时回归覆盖通过
-- 相关测试/构建检查通过
-- 没有既定契约被默默更改
-- 不存在阻塞性问题
+A fix is complete when:
+- the original problem no longer reproduces
+- expected behavior is restored
+- regression coverage passes when practical
+- relevant tests/build checks pass
+- no established contract was silently changed
+- no blocking issue remains
 
-报告：
-- 根本实现原因
-- 所做的修正
-- 回归覆盖
-- 已执行的验证
-- 剩余风险（如有）
-
-结果已准备好供用户再次运行 `/verify`。
+Report:
+- root implementation cause
+- correction made
+- regression coverage
+- verification performed
+- remaining risk, if any

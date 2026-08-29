@@ -1,70 +1,70 @@
 ---
 name: implement
-description: "根据规范或工单实现已批准的工作。遵循既定决策，保持范围紧凑，按需调试执行失败，并在需要时停止，而不是自行编造新的产品或设计决策。"
+description: "Implement approved work from a spec or tickets. Follow established decisions, keep scope tight, debug execution failures as needed, and stop rather than inventing new product or design decisions."
 disable-model-invocation: true
 ---
 
-# 实现
+# Implement
 
-实现已批准的规范或工单，而不重新开启既定的产品或设计决策。
+Implement the approved spec or tickets without reopening established product or design decisions.
 
-## 权限
+## Authority
 
-你可以：
-- 选择局部实现细节
-- 添加或更新测试
-- 进行工作所需的小型重构
-- 使用现有代码库模式和抽象
-- 在执行时失败时调用 `/diagnosing-bugs`
+You MAY:
+- choose local implementation details
+- add or update tests
+- make small refactors required by the work
+- use existing repository patterns and abstractions
+- invoke `/diagnosing-bugs` for execution-time failures
 
-你不得独立地：
-- 更改产品行为或范围
-- 更改已接受的 RFC/ADR 决策
-- 更改规范未授权的公共契约
-- 通过猜测解决真正的规范模糊性
-- 添加推测性架构或不相关的清理
+You MUST NOT independently:
+- change product behavior or scope
+- change accepted RFC/ADR decisions
+- change public contracts not authorized by the spec
+- resolve genuine spec ambiguity by guessing
+- add speculative architecture or unrelated cleanup
 
-如果实现需要新的产品、设计、架构、兼容性、迁移或风险决策，则停止并暴露障碍。不要代表用户调用用户控制的设计技能。
+If implementation requires a new product, design, architecture, compatibility, migration, or risk decision, stop and surface the blocker. Do not invoke a user-controlled design skill on the user's behalf.
 
-## 流程
+## Process
 
-1. 阅读主导规范/工单和相关 ADR/RFC。
-2. 检查受影响的代码和现有测试接缝。
-3. 将每个工单追溯到其交付的行为或验收标准。
-4. 实现最小的连贯变更。
-5. 在预先约定的接缝处，在可行时使用 `/tdd`。
-6. 定期运行针对性测试和类型检查。
-7. 如果出现执行时错误或意外技术失败，使用 `/diagnosing-bugs`，然后继续。
-8. 实现完成后运行完整相关测试套件。
-9. 针对适当的固定点使用 `/code-review`。
-10. 在已批准范围内处理阻塞性审查意见。
-11. 将完成的工作提交到当前分支。
+1. Read the governing spec/tickets and relevant ADRs/RFCs.
+2. Inspect the affected code and existing test seams.
+3. Trace each ticket to the behavior or acceptance criteria it delivers.
+4. Implement the smallest coherent change.
+5. Use `/tdd` where practical at the pre-agreed seam.
+6. Run focused tests and typechecking regularly.
+7. If an execution-time bug or unexpected technical failure appears, use `/diagnosing-bugs` and then continue.
+8. Run the full relevant test suite once implementation is complete.
+9. Once done, use `/code-review` to review the work.
+10. Address blocking review findings within the approved scope.
+11. Commit the completed work to the current branch.
 
-## 上报
+## Escalation
 
-当发现以下情况时停止实现：
-- 不清晰或已变更的产品意图
-- 未解决的范围或用户体验行为
-- 必须变更的 RFC/设计决策
-- ADR 冲突
-- 模糊或不正确的规范契约
-- 尚未确立的兼容性或迁移决策
+Stop implementation when you discover:
+- unclear or changed product intent
+- unresolved scope or UX behavior
+- an RFC/design decision that must change
+- an ADR conflict
+- an ambiguous or incorrect spec contract
+- a compatibility or migration decision not already established
 
-报告：
-- 什么被阻塞
-- 冲突的证据
-- 哪个上游决策似乎拥有该问题
+Report:
+- what is blocked
+- the conflicting evidence
+- which upstream decision appears to own the issue
 
-不要默默选择新方向。
+Do not silently choose a new direction.
 
-## 完成
+## Completion
 
-当满足以下条件时，实现完成：
-- 已批准范围已实现
-- 针对性和完整相关测试通过
-- 在适用时类型检查/构建检查通过
-- 代码审查没有阻塞性意见
-- 不存在未解决的实现障碍
-- 当前分支已提交
+Implementation is complete when:
+- approved scope is implemented
+- focused and full relevant tests pass
+- typechecking/build checks pass where applicable
+- code review has no blocking finding
+- no unresolved implementation blocker remains
+- the current branch is committed
 
-实现完成意味着**已准备好供用户验证**，而非产品验收。
+Implementation completion means **ready for user verification**, not product acceptance.

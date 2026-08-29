@@ -1,326 +1,169 @@
 ---
 name: verify
-description: "根据已批准的需求和验收标准，执行用户要求的交付后验收验证。通过最高稳定的可观察接缝验证实际交付的行为。不审查代码质量、重新设计解决方案或修改产品代码。"
+description: "Verify delivered behavior against approved requirements and acceptance criteria. Use observable evidence, diagnose failures when necessary, and report pass, fail, or blocked without modifying the delivery."
+disable-model-invocation: true
 ---
 
-# 验证
+# Verify
 
-对交付的工作执行独立的验收验证。
+Perform user-requested post-delivery acceptance verification.
 
-验证回答：
+Verify answers:
 
-> 交付的行为是否实际满足已批准的验收契约？
+> Does the delivered behavior satisfy the approved acceptance contract?
 
-这不是代码审查。
+This is not code review and does not modify the delivery.
 
-`code-review` 评估代码变更是否根据代码库标准和原始规范看起来正确。
+## Rules
 
-`verify` 评估交付的系统是否实际按需求运行。
+### 1. Verify the contract
 
-在验证期间不要修改产品代码。
+Use the relevant authoritative artifacts:
 
-## 规则
+- requirements
+- acceptance criteria
+- approved product behavior
+- applicable technical design or architectural constraints
+- compatibility requirements
 
-### 1. 验证契约，而非实现
+Implementation is the subject of verification, not the source of expected behavior.
 
-从权威验收契约开始，而不是从代码开始。
+### 2. Verify observable behavior
 
-使用相关的：
+Use the highest stable seam that demonstrates the required behavior, such as:
 
-- 规范需求
-- 验收标准
-- 已批准的产品行为
-- 适用的 RFC 或 ADR 约束
-- 明确的兼容性要求
+- user-visible behavior
+- public API or CLI
+- protocol or integration boundary
+- service or domain boundary
 
-实现是被验证的对象，而非预期行为的来源。
+Use lower-level checks only when necessary.
 
-### 2. 验证可观察行为
+### 3. Tests are evidence, not authority
 
-优先选择能够展示所需结果的最高稳定接缝。
+Existing tests may be reused when they actually demonstrate the acceptance criteria.
 
-根据系统不同，这可能是：
+Passing tests, CI, or code review alone does not prove acceptance.
 
-- 用户可见行为
-- 公共 API
-- CLI
-- 协议边界
-- 集成边界
-- 服务边界
-- 领域边界
+### 4. Do not repair during verification
 
-仅当所需行为无法在更高接缝上合理展示时，才使用较低接缝。
+Do not modify:
 
-### 3. 现有测试是证据，而非验收权威
+- product code
+- tests
+- requirements
+- specifications
+- technical design
 
-通过测试套件本身并不证明验收通过。
+Do not weaken or reinterpret acceptance expectations to obtain a pass.
 
-当现有测试确实通过适当接缝执行验收标准时，可以复用。
+### 5. Do not invent expected behavior
 
-不要仅仅因为以下原因就将标准标记为通过：
+If authoritative artifacts allow materially different interpretations, mark the affected criterion `BLOCKED`.
 
-- 单元测试通过
-- CI 通过
-- 实现添加了测试
-- 代码审查未发现问题
-- 相关代码看起来正确
+Report the ambiguity instead of choosing an interpretation.
 
-证据必须展示所需行为。
+## Process
 
-### 4. 独立验证
+### Step 1 — Establish the acceptance contract
 
-不要假设实现时的验证已足够。
+Identify the relevant:
 
-从交付状态重新确立验收证据。
+- requirements
+- acceptance criteria
+- observable constraints
+- compatibility expectations
 
-优先使用独立可观察的证据，而非实现声明。
+Do not expand scope beyond the approved contract.
 
-### 5. 不执行代码审查
+### Step 2 — Choose verification evidence
 
-不要审查：
+For each acceptance criterion, determine the highest stable seam and smallest sufficient check that can demonstrate it.
 
-- 编码风格
-- 命名
-- 格式
-- 代码坏味道
-- 抽象质量
-- 内部架构优雅性
-- 差异整洁性
-- 不相关的可维护性问题
+Reuse existing tests or interfaces when appropriate.
 
-除非它们直接阻止验收标准的验证。
+### Step 3 — Execute verification
 
-这些问题属于 `code-review`。
+Actually exercise the delivered behavior when practical.
 
-### 6. 不修复失败
+For each required criterion record:
 
-验证在产品行为方面是只读的。
+- `PASS` — evidence demonstrates the required behavior
+- `FAIL` — observed behavior contradicts the required behavior
+- `BLOCKED` — reliable verification cannot currently determine pass or fail
 
-不要：
+Do not infer `PASS` merely from the absence of observed failure.
 
-- 修改生产代码
-- 更改测试以使验证通过
-- 更改需求
-- 重新解释模糊的验收标准
-- 重新设计解决方案
-- 默默削弱验收预期
+### Step 4 — Diagnose failures
 
-当验证失败时，记录失败和证据。
+Do not assume a failed criterion is an implementation bug.
 
-当失败原因不明确时，将结果路由到 `/diagnose`。
+When the cause is not already established, use [DIAGNOSE.md](./DIAGNOSE.md) to identify:
 
-### 7. 不编造预期行为
+- root cause
+- classification
+- supporting evidence
+- affected authority or artifact
+- required correction
+- regression verification needed
 
-如果权威产物允许多种实质不同的解释，则将受影响标准标记为 `BLOCKED`。
+Diagnosis describes what must change; it does not select or invoke the correction workflow.
 
-陈述模糊性，而非选择一种解释。
+### Step 5 — Check relevant regressions
 
-产品、设计、架构和规范决策仍由各自的上游工作流负责。
+Run regression checks when the delivered change may affect established adjacent behavior.
 
-## 流程
+Keep the scope proportional to the change and its risk.
 
-### 第 1 步 — 确立验收契约
+### Step 6 — Report
 
-阅读相关权威产物。
+Produce a concise verification report.
 
-确定：
+## Output
 
-- 需求
-- 验收标准
-- 外部可观察约束
-- 相关兼容性预期
+# Verification: <Title>
 
-不要将范围扩大到已批准契约之外。
+## Result
 
-### 第 2 步 — 构建验证矩阵
+PASS | FAIL | BLOCKED
 
-将每个验收标准映射到其需求和验证方法。
+## Acceptance Results
 
-例如：
+### <Criterion>
 
-| 需求 | 验收标准 | 验证 |
-|---|---|---|
-| R-001 | AC-001 | 公共行为检查 |
-| R-002 | AC-002 | 集成测试 |
-| R-003 | AC-003 | CLI 调用 |
+**Result:** PASS | FAIL | BLOCKED
 
-在可用时使用项目现有标识符。
+**Evidence:** <observable evidence>
 
-不要仅仅为了使矩阵看起来完整而编造 ID。
+Repeat for each required criterion.
 
-### 第 3 步 — 检查可用验证证据
+## Failures
 
-检查相关的：
+For each failure, when applicable:
 
-- 现有测试
-- 测试固件
-- 可运行应用程序
-- 命令
-- API
-- 集成环境
-- 日志或可观察输出
+- expected behavior
+- observed behavior
+- root cause and classification
+- required correction
 
-确定哪些证据实际展示了每个验收标准。
+Omit when none fail.
 
-不要将实现结构视为验收证据。
+## Blockers
 
-### 第 4 步 — 选择验证接缝
+Describe anything preventing reliable verification.
 
-对每个标准，确定展示所需行为的最高稳定接缝。
+Omit when none exist.
 
-优先使用现有接缝。
+## Regression Checks
 
-当现有公共或集成边界可以展示结果时，避免引入仅用于测试的接缝。
+Relevant regression checks and results.
 
-### 第 5 步 — 执行验证
+Omit when unnecessary.
 
-对交付的实现运行最小充分检查。
+## Overall Result
 
-在可行时，实际执行验收标准所描述的工作流。
+- `PASS` only when every required criterion passes
+- `FAIL` when any required criterion fails
+- `BLOCKED` when none fail but one or more required criteria cannot be reliably verified
 
-捕获足够证据以区分：
-
-- 通过
-- 失败
-- 阻塞
-
-不要修改产品行为以获得通过结果。
-
-### 第 6 步 — 检查相关回归
-
-当交付的变更可能影响既定的相邻行为时，运行相关回归检查。
-
-保持回归范围与变更及其风险成比例。
-
-不要将验收验证变成无限制的代码库审计。
-
-### 第 7 步 — 报告
-
-独立报告每个标准。
-
-使用：
-
-- `通过` — 证据展示了所需行为
-- `失败` — 观察到的行为与所需行为矛盾
-- `阻塞` — 验证当前无法确定通过或失败
-
-标准不会仅仅因为没有观察到失败就被标记为通过。
-
-## 失败处理
-
-当标准失败时，记录：
-
-- 预期行为
-- 观察到的行为
-- 复现或验证方法
-- 相关证据
-- 受影响的需求或验收标准
-
-不要假设原因是实现错误。
-
-失败可能源自：
-
-- 实现
-- 测试
-- 规范
-- RFC/设计
-- ADR
-- 产品需求
-- 环境或依赖
-
-如果需要根本原因分类，则停止验证并将失败路由到 `/diagnose`。
-
-不要从未解释的验收失败直接调用 `/fix-bug`。
-
-## 阻塞处理
-
-当验证无法产生可靠证据时，使用 `BLOCKED`。
-
-示例包括：
-
-- 模糊的验收契约
-- 所需环境不可用
-- 外部依赖不可访问
-- 缺少测试能力
-- 所需凭证或资源不可用
-- 验证需要未经批准的破坏性操作
-
-准确解释什么阻止了验证。
-
-不要将不确定性转化为通过或失败。
-
-## 输出
-
-使用简洁的验收报告。
-
-# 验证：<标题>
-
-## 结果
-
-通过 | 失败 | 阻塞
-
-## 验收结果
-
-### <验收标准>
-
-**结果：** 通过 | 失败 | 阻塞
-
-**证据：**
-执行或观察到的内容。
-
-对每个相关标准重复。
-
-## 回归检查
-
-执行的相关回归验证及其结果。
-
-当不需要时省略。
-
-## 失败
-
-对每个失败：
-
-- 预期行为
-- 观察到的行为
-- 复现
-- 证据
-
-当所有标准通过时省略。
-
-## 阻塞项
-
-任何阻止可靠验证的内容。
-
-当不存在时省略。
-
-## 结论
-
-说明交付的实现是否满足已验证的验收契约。
-
-此处不包含代码质量批准。
-
-## 总体结果
-
-使用以下规则：
-
-- 仅当每个必需的验收标准都通过时，结果才为 `通过`
-- 当任何必需标准明确失败时，结果为 `失败`
-- 当没有标准失败但一个或多个必需标准无法可靠验证时，结果为 `阻塞`
-
-永远不要将 `阻塞` 转换为 `通过`。
-
-## 完成
-
-当满足以下条件时，验证完成：
-
-- 权威验收契约已被识别
-- 每个相关验收标准已被考虑
-- 每个必需标准都有通过、失败或阻塞的证据
-- 验证使用了适当的可观察接缝
-- 在必要时检查了相关回归
-- 失败已被记录而未被默默修复
-- 模糊性未被通过编造解决
-
-成功的验证意味着交付的行为已根据验收契约得到证明。
-
-这并不意味着实现已通过代码审查；那是一个独立的问题。
+Verification is complete when every required criterion has sufficient evidence or an explicit blocker.
