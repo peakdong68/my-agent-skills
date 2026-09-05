@@ -1,7 +1,6 @@
 ---
 name: implement
 description: "Implement approved work from a spec or tickets. Follow established decisions, keep scope tight, debug execution failures as needed, and stop rather than inventing new product or design decisions."
-disable-model-invocation: true
 ---
 
 # Implement
@@ -24,11 +23,11 @@ You MUST NOT independently:
 - resolve genuine spec ambiguity by guessing
 - add speculative architecture or unrelated cleanup
 
-If implementation requires a new product, design, architecture, compatibility, migration, or risk decision, stop and surface the blocker. Do not invoke a user-controlled design skill on the user's behalf.
+Choose local implementation details within the approved contract. Inspect the spec, ADRs, code and tests before escalating. Pause only the affected work when an unresolved decision would change product behavior, public contracts, acceptance, compatibility, migration strategy or authorized scope; continue independent authorized work. Do not invoke a user-controlled design skill on the user's behalf without authorization.
 
 ## Process
 
-1. Read the governing spec/tickets and relevant ADRs/RFCs.
+1. Read the governing spec/tickets and relevant ADRs/RFCs; record the starting commit and pre-existing worktree changes.
 2. Inspect the affected code and existing test seams.
 3. Trace each ticket to the behavior or acceptance criteria it delivers.
 4. Implement the smallest coherent change.
@@ -36,13 +35,13 @@ If implementation requires a new product, design, architecture, compatibility, m
 6. Run focused tests and typechecking regularly.
 7. If an execution-time bug or unexpected technical failure appears, use `/diagnosing-bugs` and then continue.
 8. Run the full relevant test suite once implementation is complete.
-9. Once done, use `/code-review` to review the work.
+9. Once done, use `/code-review`, passing the baseline, spec/tickets and actual change scope, including uncommitted and new files while excluding unrelated user changes.
 10. Address blocking review findings within the approved scope.
-11. Commit the completed work to the current branch.
+11. Commit the completed work to the current branch, unless the calling workflow assigns commit ownership to the parent; in that case return the verified changes for parent review and commit.
 
 ## Escalation
 
-Stop implementation when you discover:
+After inspecting available evidence, pause the affected work when an unresolved decision remains about:
 - unclear or changed product intent
 - unresolved scope or UX behavior
 - an RFC/design decision that must change
@@ -65,6 +64,6 @@ Implementation is complete when:
 - typechecking/build checks pass where applicable
 - code review has no blocking finding
 - no unresolved implementation blocker remains
-- the current branch is committed
+- the current branch is committed by the designated owner; a worker handoff alone is not end-to-end completion
 
 Implementation completion means **ready for user verification**, not product acceptance.

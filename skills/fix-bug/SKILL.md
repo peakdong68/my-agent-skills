@@ -18,20 +18,20 @@ Before fixing, establish:
 - authoritative contract or diagnosis
 - enough evidence to treat this as an implementation defect
 
-If the issue instead appears to be a Spec, RFC, ADR, PRD, or unresolved cross-layer problem, stop and route it upstream. Do not guess in code.
+Inspect the spec, ADRs, code and tests first. A defect spanning layers is not itself a reason to stop. Pause affected work only if fixing it requires an unresolved change to product behavior, an approved contract, acceptance, compatibility, migration strategy or authorized scope; surface that decision and continue independent authorized work. Do not guess a new contract in code.
 
 ## Process
 
-1. Reproduce the reported failure .
+1. Reproduce the reported failure.
 2. Identify the smallest stable seam that captures the real bug.
 3. Add or confirm regression coverage when practical; it should fail before the fix.
 4. Locate the root implementation cause.
 5. Apply the smallest coherent correction.
-6. If unexpected technical failures arise during the fix, use `/diagnosing-bugs`.
+6. If unexpected technical failures arise during the fix, use `diagnosing-bugs`.
 7. Re-run the regression check and original reproduction.
 8. Run directly related tests, then broader relevant tests when necessary.
 9. Run typechecking/build checks where applicable.
-10. Once done, use `/code-review` to review the work.
+10. Once done, use `code-review` to review the work.
 
 ## Scope Rules
 
